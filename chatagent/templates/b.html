@@ -1,0 +1,51 @@
+<audio controls></audio>
+<button>button</button>
+<script>
+  var v = document.querySelector("audio");
+  var b = document.querySelector("button");
+
+  navigator.mediaDevices.getUserMedia ({audio:true}, function(stream) {
+    v.srcObject = stream;
+    v.play();
+
+    var mediaRecorder = new MediaRecorder(stream);
+    var chunks = [];
+
+    b.addEventListener("click", function() {
+        mediaRecorder.stop();
+    });
+
+    mediaRecorder.ondataavailable = function(evt) {
+      chunks.push(evt.data);
+      // or send evt.data using an XMLHttpRequest to the server
+    };
+
+    mediaRecorder.onerror = function(evt) {
+      console.log('onerror fired');
+    };
+
+    mediaRecorder.onstop = function(evt) {
+      console.log('onstop fired');
+      // make a blob out of all the chunks
+      var blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      // allow the user to download the opus file
+      window.location.href = URL.createObjectURL(blob);
+    };
+
+    mediaRecorder.onwarning = function(evt) {
+      console.log('onwarning fired');
+    };
+
+    v.addEventListener("loadedmetadata", function() {
+      mediaRecorder.start();  
+      v.play();
+    });
+
+    v.addEventListener("ended", function() {
+      mediaRecorder.stop();
+      mediaRecorder.requestData();
+    });
+  }, function() {
+    alert("gUM failure")
+  });
+</script>

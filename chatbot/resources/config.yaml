@@ -1,0 +1,8 @@
+chatbotURL : ''
+chatAgentURL : 'http://10.86.1.183:65432/chatbot-prediction/'
+
+flaskData : {
+    host : 'localhost',
+    port : 6000,
+    debugFlag : True
+}
